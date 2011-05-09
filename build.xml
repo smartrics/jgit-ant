@@ -1,12 +1,16 @@
 <project name="jgit-ant" default="package">
 
+	<property name="version" value="0.0.1" />
 	<property name="build.target" value="1.5" />
 	<property name="build.debug" value="false" />
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="src.dir" value="src" />
 	<property name="lib.dir" value="lib" />
-	<property name="dist.jar.name" value="jgit-ant.jar" />
+	<property name="jar.name" value="${ant.project.name}.jar" />
+	<property name="dist.dir" value="${build.dir}/dist" />
+	<property name="dist.jar.name" value="${ant.project.name}-${version}.jar" />
+	<property name="dist.zip.name" value="${ant.project.name}-${version}.zip" />
 
 	<path id="project.classpath">
 		<fileset dir="${lib.dir}">
@@ -38,9 +42,21 @@
 		<copy todir="${classes.dir}">
 			<fileset dir="${src.dir}" includes="*.properties" />
 		</copy>
-		<jar destfile="${build.dir}/${dist.jar.name}"
+		<jar destfile="${build.dir}/${jar.name}"
 		     basedir="${classes.dir}"
 		     includes="**/*" />
+	</target>
+
+	<target name="dist" depends="package">
+		<delete dir="${dist.dir}" />
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${dist.dir}/artefacts" />
+		<copy file="${build.dir}/${jar.name}"
+		      tofile="${dist.dir}/artefacts/${dist.jar.name}" />
+		<copy file="build.sample.xml" todir="${dist.dir}/artefacts" />
+		<zip destfile="${dist.dir}/${dist.zip.name}">
+			<fileset dir="${dist.dir}/artefacts" includes="*.*" />
+		</zip>
 	</target>
 
 </project>
