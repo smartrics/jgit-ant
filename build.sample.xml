@@ -1,0 +1,25 @@
+<project name="sample.jgit-ant.project" default="ci">
+
+	<path id="git.classpath">
+		<pathelement location="build/jgit-ant.jar" />
+		<pathelement location="lib/jsch-0.1.44.jar" />
+		<pathelement location="lib/org.eclipse.jgit-0.12.1.jar" />
+	</path>
+
+	<target name="ci">
+		<taskdef resource="jgit-ant.properties" classpathref="git.classpath" />
+        <delete dir="build/fitnesse-git" />
+        <mkdir dir="build/fitnesse-git" />
+		<git localDirectory="build/fitnesse-git" verbose="true">
+			<clone uri="git://github.com/unclebob/fitnesse.git" />
+		</git>
+
+        <delete dir="build/restfixture-git" />
+        <mkdir dir="build/restfixture-git" />
+		<git localDirectory="build/restfixture-git" verbose="true">
+            <clone uri="git://github.com/smartrics/RestFixture.git" />
+        </git>
+
+	</target>
+
+</project>
