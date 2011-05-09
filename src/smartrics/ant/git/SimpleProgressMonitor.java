@@ -6,6 +6,7 @@ public class SimpleProgressMonitor implements ProgressMonitor {
 
     private GitTask owner;
     private int progress;
+    private String name;
 
     public SimpleProgressMonitor(GitTask t) {
         this.owner = t;
@@ -15,14 +16,14 @@ public class SimpleProgressMonitor implements ProgressMonitor {
     public void update(int sz) {
         int p = sz * 100 / progress;
         if (p % 10 == 0) {
-            owner.log("UPDATe: " + p);
+            owner.log("  update: " + p);
         }
     }
 
     @Override
     public void start(int sz) {
         progress = sz;
-        owner.log("START: " + sz);
+        owner.log("  start: " + sz);
     }
 
     @Override
@@ -32,12 +33,13 @@ public class SimpleProgressMonitor implements ProgressMonitor {
 
     @Override
     public void endTask() {
-        owner.log("END");
+        owner.log("end: " + name);
     }
 
     @Override
     public void beginTask(String what, int sz) {
-        owner.log("BEGIN: " + what + " (" + sz + ")");
+        name = what;
+        owner.log("begin: " + what + " (" + sz + ")");
     }
 
 }
