@@ -7,6 +7,7 @@ public class SimpleProgressMonitor implements ProgressMonitor {
     private GitTask owner;
     private int progress;
     private String name;
+    private int lastSz = -1;
 
     public SimpleProgressMonitor(GitTask t) {
         this.owner = t;
@@ -14,10 +15,15 @@ public class SimpleProgressMonitor implements ProgressMonitor {
 
     @Override
     public void update(int sz) {
+        if (lastSz == sz) {
+            return;
+        }
+        lastSz = sz;
         int p = sz * 100 / progress;
         if (p % 10 == 0) {
             owner.log("  update: " + p);
         }
+        progress = sz;
     }
 
     @Override
