@@ -1,2 +1,37 @@
 Minimalistic ant tasks wrapping jGit (http://www.eclipse.org/jgit/)
 
+REASON
+
+I am setting up a CI build for RestFixture. As I don't have access to the hosted CI server I am using and not being able to 
+install git, i need a fully self contained java implementation of git for the sake of supporting my CI build.
+
+CHANGELOG:
+
+version 0.0.1
+- first version
+- support for cloning public remote repository
+
+DOCUMENTATION
+
+See build.sample.xml
+
+<project name="sample.jgit-ant.project" default="ci">
+
+    <path id="git.classpath">
+        <pathelement location="build/jgit-ant.jar" />
+        <pathelement location="lib/jsch-0.1.44.jar" />
+        <pathelement location="lib/org.eclipse.jgit-0.12.1.jar" />
+    </path>
+
+    <target name="ci">
+        <taskdef resource="jgit-ant.properties" classpathref="git.classpath" />
+
+        <delete dir="build/restfixture-git-ro" />
+        <mkdir dir="build/restfixture-git-ro" />
+        <git localDirectory="build/restfixture-git-ro" verbose="true">
+            <clone uri="git://github.com/smartrics/RestFixture.git" />
+        </git>
+
+    </target>
+
+</project>
