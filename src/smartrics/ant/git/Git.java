@@ -6,42 +6,46 @@ import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.TaskContainer;
-import org.eclipse.jgit.lib.ProgressMonitor;
 
-public class Git extends Task implements TaskContainer {
+public class Git extends Task {
 
     private boolean verbose = false;
-    private File directory;
+    private File localDirectory;
 
-    private List<Task> tasks = new ArrayList<Task>();
+    private List<GitTask> tasks = new ArrayList<GitTask>();
 
     public void setVerbose(boolean v) {
         this.verbose = v;
     }
     
-    public void setDirectory(File dir) {
-        this.directory = dir;
+    public void setLocalDirectory(File dir) {
+        this.localDirectory = dir;
     }
 
+    public Clone createClone() {
+        Clone c = new Clone();
+        tasks.add(c);
+        return c;
+    }
+    
     @Override
     public void execute() throws BuildException {
-        ProgressMonitor pm = null;
-        if (verbose) {
-            pm = new SimpleProgressMonitor();
+        if (localDirectory == null) {
+            throw new BuildException("Please specify local repository directory");
         }
-        for (Task t : tasks) {
-            if (t instanceof GitTask) {
-                ((GitTask) t).setProgressMonitor(pm);
-                ((GitTask) t).setDirectory(directory);
+        int size = tasks.size();
+        while(size>0) {
+            GitTask t = tasks.remove(0);
+            size = tasks.size();
+            if (verbose) {
+                t.setProgressMonitor(new SimpleProgressMonitor(t));
             }
-            t.execute();
+            t.setDirectory(localDirectory);
+            try {
+                t.execute();
+            } catch (Exception e) {
+                throw new BuildException("Unexpected exception occurred!", e);
+            }
         }
     }
-
-    @Override
-    public void addTask(Task t) {
-        tasks.add(t);
-    }
-
 }

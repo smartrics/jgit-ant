@@ -4,13 +4,25 @@ import org.eclipse.jgit.lib.ProgressMonitor;
 
 public class SimpleProgressMonitor implements ProgressMonitor {
 
-    @Override
-    public void update(int arg0) {
+    private GitTask owner;
+    private int progress;
+
+    public SimpleProgressMonitor(GitTask t) {
+        this.owner = t;
     }
 
     @Override
-    public void start(int arg0) {
-        System.out.println("START: " + arg0);
+    public void update(int sz) {
+        int p = sz * 100 / progress;
+        if (p % 10 == 0) {
+            owner.log("UPDATe: " + p);
+        }
+    }
+
+    @Override
+    public void start(int sz) {
+        progress = sz;
+        owner.log("START: " + sz);
     }
 
     @Override
@@ -20,12 +32,12 @@ public class SimpleProgressMonitor implements ProgressMonitor {
 
     @Override
     public void endTask() {
-        System.out.println("END");
+        owner.log("END");
     }
 
     @Override
-    public void beginTask(String arg0, int arg1) {
-        System.out.println("BEGIN: " + arg0 + " (" + arg1 + ")");
+    public void beginTask(String what, int sz) {
+        owner.log("BEGIN: " + what + " (" + sz + ")");
     }
 
 }

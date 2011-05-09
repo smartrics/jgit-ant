@@ -8,4 +8,8 @@ public interface GitTask {
     void setProgressMonitor(ProgressMonitor pm);
 
     void setDirectory(File dir);
+
+    void log(String message);
+
+    void execute();
 }

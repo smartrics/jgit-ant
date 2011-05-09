@@ -35,13 +35,14 @@ public class Clone extends Task implements GitTask {
             new URIish(uri);
             CloneCommand clone = new CloneCommand();
             clone.setURI(uri);
-            clone.setDirectory(directory);
+            clone.setDirectory(new File(directory.getAbsolutePath()));
             clone.setProgressMonitor(progressMonitor);
             clone.call();
         } catch (URISyntaxException e) {
-            throw new BuildException("Invalid URI: " + uri);
+            throw new BuildException("Invalid URI: " + uri, e);
         } catch (Exception e) {
-            throw new BuildException("Unexpected exception: " + e.getMessage());
+            e.printStackTrace();
+            throw new BuildException("Unexpected exception: " + e.getMessage(), e);
         }
 
     }
