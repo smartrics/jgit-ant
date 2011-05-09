@@ -1,0 +1,46 @@
+<project name="jgit-ant" default="package">
+
+	<property name="build.target" value="1.5" />
+	<property name="build.debug" value="false" />
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="src.dir" value="src" />
+	<property name="lib.dir" value="lib" />
+	<property name="dist.jar.name" value="jgit-ant.jar" />
+
+	<path id="project.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="compile" depends="init">
+		<mkdir dir="${classes.dir}" />
+		<javac includes="**/*.java"
+		       debug="${build.debug}"
+		       destdir="${classes.dir}"
+		       target="${build.target}">
+			<src path="${src.dir}" />
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="package" depends="compile">
+		<delete file="${build.dir}/${dist.jar.name}" failonerror="false" />
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}" includes="*.properties" />
+		</copy>
+		<jar destfile="${build.dir}/${dist.jar.name}"
+		     basedir="${classes.dir}"
+		     includes="**/*" />
+	</target>
+
+</project>
