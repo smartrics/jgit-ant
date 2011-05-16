@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
-public class Git extends Task {
+public class GitTasksContainer extends Task {
 
     private boolean verbose = false;
     private File localDirectory;
@@ -22,8 +22,8 @@ public class Git extends Task {
         this.localDirectory = dir;
     }
 
-    public Clone createClone() {
-        Clone c = new Clone();
+    public CloneTask createClone() {
+        CloneTask c = new CloneTask();
         tasks.add(c);
         return c;
     }

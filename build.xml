@@ -1,6 +1,6 @@
 <project name="jgit-ant" default="package">
 
-	<property name="version" value="0.0.1" />
+	<property name="version" value="0.0.2" />
 	<property name="build.target" value="1.5" />
 	<property name="build.debug" value="false" />
 	<property name="build.dir" value="build" />
