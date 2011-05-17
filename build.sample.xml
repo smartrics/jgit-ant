@@ -1,4 +1,4 @@
-<project name="sample.jgit-ant.project" default="ci">
+<project name="sample.jgit-ant.project" default="update-remote">
 
 	<path id="git.classpath">
 		<pathelement location="build/jgit-ant.jar" />
@@ -26,14 +26,14 @@
 	<target name="update-remote">
 		<git localDirectory="build/restfixture-git-ro" verbose="true">
 			<!-- pulls from remote, the local repository in git parent task. 
-			     All three properties indicating failure are optional 
-			     pull.failed is set if either merge fails or rebase fails
+			     The pullFailedProperty property indicates failure and its optional
+			     in this case pull.failed is set if either merge fails 
 			     -->
-			<pull mergeFailedProperty="merge.failed"
-			      rebaseFailedProperty="rebase.failed"
-			      pullFailedProperty="pull.failed" />
+			<pull alreadyUpToDateProperty="is.uptodate" pullFailedProperty="pull.failed" />
 		</git>
 
+        <echo message="Repository is uptodate: ${is.uptodate}" />
+        <echo message="Pull failed: ${pull.failed}" />
 		<fail if="pull.failed"
 		      message="Pull failed: ${pull.failed}. Details:\n  merge result: ${merge.failed}\n  rebase result: ${rebase.failed}" />
 	</target>
