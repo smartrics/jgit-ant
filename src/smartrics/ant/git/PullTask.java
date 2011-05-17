@@ -15,10 +15,10 @@ import org.eclipse.jgit.transport.FetchResult;
 public class PullTask extends AbstractGitTask {
     private String pullFailedProperty;
 
-    private String alreadyUpToDateProperty;
+    private String modificationExistProperty;
 
-    public void setAlreadyUpToDateProperty(String p) {
-        this.alreadyUpToDateProperty = p;
+    public void setModificationExistProperty(String p) {
+        this.modificationExistProperty = p;
     }
 
     public void setPullFailedProperty(String p) {
@@ -44,9 +44,9 @@ public class PullTask extends AbstractGitTask {
             }
             MergeStatus mStatus = mRes.getMergeStatus();
             boolean alreadyUpToDate = mStatus != null && MergeStatus.ALREADY_UP_TO_DATE.equals(mStatus);
-            if (alreadyUpToDate && alreadyUpToDateProperty != null) {
-                getProject().setProperty(alreadyUpToDateProperty, "true");
-                log("Setting '" + pullFailedProperty + "' to 'true'", 4);
+            if (!alreadyUpToDate && modificationExistProperty != null) {
+                getProject().setProperty(modificationExistProperty, "true");
+                log("Setting '" + modificationExistProperty + "' to 'true'", 4);
             }
             boolean mergeFailed = mStatus != null && MergeStatus.FAILED.equals(mStatus) || MergeStatus.CONFLICTING.equals(mStatus);
             boolean rebaseFailed = rStatus != null && Status.FAILED.equals(rStatus);

@@ -15,7 +15,7 @@ DOCUMENTATION
 
 See build.sample.xml
 
-<project name="sample.jgit-ant.project" default="ci">
+<project name="sample.jgit-ant.project" default="update-remote">
 
     <path id="git.classpath">
         <pathelement location="build/jgit-ant.jar" />
@@ -23,15 +23,45 @@ See build.sample.xml
         <pathelement location="lib/org.eclipse.jgit-0.12.1.jar" />
     </path>
 
-    <target name="ci">
-        <taskdef resource="jgit-ant.properties" classpathref="git.classpath" />
+    <taskdef resource="jgit-ant.properties" classpathref="git.classpath" />
 
+    <!--
+        the git task is useful to group git commands on a single local repository.
+        
+        note: localDirectory is mandatory and the directory must exist.
+     -->
+
+    <target name="ci">
         <delete dir="build/restfixture-git-ro" />
         <mkdir dir="build/restfixture-git-ro" />
         <git localDirectory="build/restfixture-git-ro" verbose="true">
+            <!-- clones the repository specified in uri attribute to local directory specified in the git parent task -->
             <clone uri="git://github.com/smartrics/RestFixture.git" />
         </git>
+    </target>
 
+    <target name="update-remote">
+        <git localDirectory="build/restfixture-git-ro" verbose="true">
+            <!-- pulls from remote, the local repository in git parent task. 
+                 The pullFailedProperty property indicates failure and its optional
+                 in this case pull.failed is set if either merge fails 
+                 modificationExistProperty is set if after pull modification exist.
+                 -->
+            <pull modificationExistProperty="is.not.uptodate" pullFailedProperty="pull.failed" />
+        </git>
+
+        <echo message="Repository is not uptodate: ${is.not.uptodate}" />
+        <echo message="Pull failed: ${pull.failed}" />
+        <fail if="pull.failed"
+              message="Pull failed: ${pull.failed}. Details:\n  merge result: ${merge.failed}\n  rebase result: ${rebase.failed}" />
+    </target>
+
+    <!-- commands can also be written on their own (not as children of git task) -->
+
+    <target name="simple-task-execution">
+        <delete dir="build/restfixture-git-ro" />
+        <mkdir dir="build/restfixture-git-ro" />
+        <clone localDirectory="build/restfixture-git-ro" verbose="true" uri="git://github.com/smartrics/RestFixture.git" />
     </target>
 
 </project>
