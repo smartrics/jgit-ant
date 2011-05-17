@@ -28,6 +28,12 @@ public class GitTasksContainer extends Task {
         return c;
     }
     
+    public PullTask createPull() {
+        PullTask p = new PullTask();
+        tasks.add(p);
+        return p;
+    }
+
     @Override
     public void execute() throws BuildException {
         if (localDirectory == null) {
