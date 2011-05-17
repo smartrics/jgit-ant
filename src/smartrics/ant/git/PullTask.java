@@ -1,6 +1,5 @@
 package smartrics.ant.git;
 
-import org.apache.tools.ant.BuildException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeResult;
 import org.eclipse.jgit.api.MergeResult.MergeStatus;
@@ -46,7 +45,7 @@ public class PullTask extends AbstractGitTask {
             boolean alreadyUpToDate = mStatus != null && MergeStatus.ALREADY_UP_TO_DATE.equals(mStatus);
             if (!alreadyUpToDate && modificationExistProperty != null) {
                 getProject().setProperty(modificationExistProperty, "true");
-                log("Setting '" + modificationExistProperty + "' to 'true'", 4);
+                log("Setting '" + modificationExistProperty + "' to 'true'", 2);
             }
             boolean mergeFailed = mStatus != null && MergeStatus.FAILED.equals(mStatus) || MergeStatus.CONFLICTING.equals(mStatus);
             boolean rebaseFailed = rStatus != null && Status.FAILED.equals(rStatus);
@@ -57,16 +56,18 @@ public class PullTask extends AbstractGitTask {
                         m = m + "\nrebase: " + rRes.getStatus();
                     }
                     getProject().setProperty(pullFailedProperty, m);
-                    log("Setting '" + pullFailedProperty + "' to '" + m + "'", 4);
+                    log("Setting '" + pullFailedProperty + "' to '" + m + "'", 2);
                 }
             }
             if ((mergeFailed || rebaseFailed) && pullFailedProperty != null) {
                 getProject().setProperty(pullFailedProperty, mRes.toString());
-                log("Setting '" + pullFailedProperty + "' to 'failed'", 4);
+                log("Setting '" + pullFailedProperty + "' to 'failed'", 2);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new BuildException("Unexpected exception: " + e.getMessage(), e);
+            if (pullFailedProperty != null) {
+                getProject().setProperty(pullFailedProperty, e.getMessage());
+                log("Setting '" + pullFailedProperty + "' to '" + e.getMessage() + "'", 2);
+            }
         }
 
     }
